@@ -1,3 +1,4 @@
+import math
 import numpy as np 
 
 def q_mult(q1: np.array, q2: np.array):
@@ -9,7 +10,7 @@ def q_mult(q1: np.array, q2: np.array):
                      x1 * y0 - y1 * x0 + z1 * w0 + w1 * z0], dtype=np.float64)    
 
 def q_conjugate(q):
-    return q*np.array([1, -1, -1, -1])    
+    return q*np.array([1.0, -1.0, -1.0, -1.0])    
 
 def qv_mult(q1: np.array, v1: np.array):
     q2 = np.append(0.0, v1)
@@ -17,7 +18,7 @@ def qv_mult(q1: np.array, v1: np.array):
 
 def axisangle_to_q(v: np.array, theta: float) -> np.array:
     v = v/np.linalg.norm(v)
-    theta /= 2
+    theta /= 2.0
     w = np.cos(theta)
     v *= np.sin(theta)    
-    return np.array(np.append(w, v))
+    return np.append(w, v)
