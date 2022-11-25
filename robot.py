@@ -1,3 +1,4 @@
+import os
 import math
 import numpy as np
 from abc import ABC
@@ -31,7 +32,7 @@ class Robot(ABC):
         self.delta_commands = np.zeros(shape=(len(joints), 6))
         self.visited_states = [False]*len(self.joints)
         self.plot = plt.figure().add_subplot(projection='3d')    
-
+   
 class RobotArm(Robot):
     def __init__(self, n_dims:int, joints: List[Joint],
                  vertices: np.array, 
@@ -43,35 +44,44 @@ class RobotArm(Robot):
         return np.linalg.norm(pt1 - pt2)
     
     def transform_child_dfs(self, father_joint_id: int,
-                            linked_joint_id: int):
+                            linked_joint_id: int, act):
         self.visited_states[linked_joint_id] = True
         for v in self.edges[linked_joint_id]: 
-            if not self.visited_states[v]:                            
-                self.transform_child_dfs(father_joint_id=father_joint_id, 
-                                         linked_joint_id=v)
-                for act in self.joints[father_joint_id].actuators:
-                    self.vertices[v, :] = act.apply(vector=self.vertices[v, :] - self.vertices[father_joint_id, :], 
-                                                    delta_commands=self.delta_commands[father_joint_id, :])                                                   
-                    self.vertices[v, :] += self.vertices[father_joint_id, :]
+            if not self.visited_states[v]:                                                          
+                self.vertices[v, :] = act.apply(vector=self.vertices[v, :] - self.vertices[father_joint_id, :], 
+                                                delta_commands=self.delta_commands[father_joint_id, :], 
+                                                father_joint_sys=self.joints[father_joint_id].world_basis,
+                                                child_joint_sys=self.joints[v].world_basis
+                                                )                       
+                self.vertices[v, :] += self.vertices[father_joint_id, :]    
 
+                self.transform_child_dfs(father_joint_id=father_joint_id, 
+                                        linked_joint_id=v, act=act)
 
     def forward_kinematics(self) -> np.array:                    
         for joint in self.joints:
             # todo: check dof constraints 
-            joint.angle_conf += self.delta_commands[joint.id, :3]   
-            self.vertices[joint.id, :] += self.delta_commands[joint.id, 3:]           
-
+            
             # DFS of the linked edges
-            self.visited_states = [False]*self.vertices.shape[0]
-            self.transform_child_dfs(father_joint_id=joint.id, 
-                                     linked_joint_id=joint.id)           
-
-        self.delta_commands = np.zeros(shape=(len(self.joints), 6))  
+            # update father joint basis            
+            for act in self.joints[joint.id].actuators:    
+                self.visited_states = [False]*self.vertices.shape[0]
+                self.transform_child_dfs(father_joint_id=joint.id, 
+                                        linked_joint_id=joint.id, act=act)    
+                # change coords basis of the father joint
+                act.apply(
+                            vector=np.zeros(shape=(3, 1)), 
+                            delta_commands=self.delta_commands[joint.id, :], 
+                            father_joint_sys=joint.world_basis,
+                            child_joint_sys=joint.world_basis
+                        )                        
+            
+        self.delta_commands[joint.id, :] = np.zeros(shape=(1, 6))  
 
     def inverse_kinematics(self, target: np.array, joint_id: int, atol: float = 0.1, lr: float = 10):            
         angle_dist = np.pi/180  # equivalent to 1 deg 
         count = 0
-        max_count = 1000
+        max_count = 60
         while count < max_count and not np.allclose(self.vertices[joint_id, :], target, atol=atol):
             for j in self.joints:      
                 for i in range(self.n_dims+1):   
@@ -90,18 +100,40 @@ class RobotArm(Robot):
             
             # plot final config
             self.visited_states = [False]*self.vertices.shape[0]
-            self.plot.clear()
+            self.plot.clear()     
+            
+            self.plot.set_xlim(-20, 20)
+            self.plot.set_ylim(-20, 20)
+            self.plot.set_zlim(0, 20)
+            self.plot.set_xlabel('X')
+            self.plot.set_ylabel('Y')
+            self.plot.set_zlabel('Z')       
             self.plot.plot(target[0], target[1], target[2], marker='*')
-            self.plot_config(vertex_id=0, color='r')                    
-            plt.pause(0.1)
+            self.plot_config(vertex_id=0, color='r')    
+            plt.pause(0.0001)
              
     def plot_config(self, vertex_id: np.array, color: str = 'b') -> None:           
         self.visited_states[vertex_id] = True
         
+        # plot joint basis
+        line_xs = np.linspace(self.vertices[vertex_id, 0], self.vertices[vertex_id, 0]+self.joints[vertex_id].world_basis[0, 0], 100)    
+        line_ys = np.linspace(self.vertices[vertex_id, 1], self.vertices[vertex_id, 1]+self.joints[vertex_id].world_basis[1, 0], 100)    
+        line_zs = np.linspace(self.vertices[vertex_id, 2], self.vertices[vertex_id, 2]+self.joints[vertex_id].world_basis[2, 0], 100)  
+        self.plot.plot(line_xs, line_ys, line_zs, color='b')      
+        line_xs = np.linspace(self.vertices[vertex_id, 0], self.vertices[vertex_id, 0]+self.joints[vertex_id].world_basis[0, 1], 100)    
+        line_ys = np.linspace(self.vertices[vertex_id, 1], self.vertices[vertex_id, 1]+self.joints[vertex_id].world_basis[1, 1], 100)    
+        line_zs = np.linspace(self.vertices[vertex_id, 2], self.vertices[vertex_id, 2]+self.joints[vertex_id].world_basis[2, 1], 100)  
+        self.plot.plot(line_xs, line_ys, line_zs, color='g')      
+        line_xs = np.linspace(self.vertices[vertex_id, 0], self.vertices[vertex_id, 0]+self.joints[vertex_id].world_basis[0, 2], 100)    
+        line_ys = np.linspace(self.vertices[vertex_id, 1], self.vertices[vertex_id, 1]+self.joints[vertex_id].world_basis[1, 2], 100)    
+        line_zs = np.linspace(self.vertices[vertex_id, 2], self.vertices[vertex_id, 2]+self.joints[vertex_id].world_basis[2, 2], 100)  
+        self.plot.plot(line_xs, line_ys, line_zs, color='r')   
+
+
         for v in self.edges[vertex_id]: 
             if not self.visited_states[v]:         
                 line_xs = np.linspace(self.vertices[vertex_id, 0], self.vertices[v, 0], 100)    
                 line_ys = np.linspace(self.vertices[vertex_id, 1], self.vertices[v, 1], 100)    
                 line_zs = np.linspace(self.vertices[vertex_id, 2], self.vertices[v, 2], 100)  
-                self.plot.plot(line_xs, line_ys, line_zs, zdir='z', color=color)      
+                self.plot.plot(line_xs, line_ys, line_zs, zdir='z', color=color)                       
                 self.plot_config(vertex_id=v)              

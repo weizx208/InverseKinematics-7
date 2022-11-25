@@ -19,12 +19,12 @@ class ArmConfigParser:
         for joint in self.config["Joints"]:          
             actuators = []
             for act_index, act in enumerate(joint["actuators"]):
-                d = ActuatorSelector[act["type"]].value            
-                d_inst = d.__new__(d, constraints=act["constraints"])
-                d_inst.__init__(constraints=act["constraints"])
+                d = ActuatorSelector[act["type"]].value
+                del act['type']            
+                d_inst = d.__new__(d, **act)
+                d_inst.__init__(**act)
                 actuators.append(d_inst)        
             joints.append(Joint(id = joint["id"], 
-                                angle_config = np.array(joint["angles"]), 
                                 actuators=actuators)
                          )
         return RobotArm(joints=joints, n_dims=self.config["n_dims"], 
