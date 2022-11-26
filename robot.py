@@ -81,7 +81,7 @@ class RobotArm(Robot):
     def inverse_kinematics(self, target: np.array, joint_id: int, atol: float = 0.1, lr: float = 10):            
         angle_dist = np.pi/180  # equivalent to 1 deg 
         count = 0
-        max_count = 60
+        max_count = 100
         while count < max_count and not np.allclose(self.vertices[joint_id, :], target, atol=atol):
             for j in self.joints:      
                 for i in range(self.n_dims+1):   
@@ -109,8 +109,9 @@ class RobotArm(Robot):
             self.plot.set_ylabel('Y')
             self.plot.set_zlabel('Z')       
             self.plot.plot(target[0], target[1], target[2], marker='*')
-            self.plot_config(vertex_id=0, color='r')    
+            self.plot_config(vertex_id=0, color='r')                
             plt.pause(0.0001)
+
              
     def plot_config(self, vertex_id: np.array, color: str = 'b') -> None:           
         self.visited_states[vertex_id] = True

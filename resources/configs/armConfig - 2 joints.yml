@@ -1,0 +1,32 @@
+# organize config as obj file:
+#     - firstly define the vertices (Joints) section
+#     - then define the edges between them (referring to their id)
+---
+n_dims: 3
+Joints:  
+    - id: 0
+      actuators:     
+          - type: Z_AXIS_MOTOR
+            start_angle: 0
+            constraints:         
+              min: -.inf 
+              max: .inf
+    - id: 1
+      actuators: 
+          - type: X_AXIS_MOTOR
+            start_angle: 0
+            constraints:         
+              min: -.inf 
+              max: .inf
+    - id: 2
+      actuators: []
+Geometry:
+  vertices: [
+    [0, 0, 0],
+    [0, 0, 10],
+    [0, 0, 20]    
+  ]
+  edges: [
+    [1], [2], []
+  ]
+  leaf_joint: [2]
