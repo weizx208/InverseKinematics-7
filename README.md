@@ -52,7 +52,9 @@ Geometry:
 + **Joints**: contains the list of joints.
     + **id**: numeric value (starting from index 0) that allows to map that joint into the robot geometry.
     + **actuators**: list of actuators (now available x, y, and z rotation).
-        - TODO: start_angle and constraints are not yet implemented and must be filled as represented in the example.
+      - **contraints**: define the maximum and the minimum values (relative to the starting configuration) appliable by the actuator.
+        - TODO: start_angle is not yet implemented.
+      
 + **Geometry**: contains informations about the robot geometry.
     + **vertices**: list of vectors describing the initial position of each joint (the joint id allows to map each joint to its location).
     + **edges**: adjacency list representing the actual connection of the vertices (joints).
