@@ -16,4 +16,4 @@ if __name__ == "__main__":
             ]
 
     for target in targets:
-        arm.inverse_kinematics(target=target, joint_id=2, lr=.0002, atol=0.01)
+        arm.inverse_kinematics(target=target, joint_id=4, lr=.01, atol=0.01)

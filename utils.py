@@ -1,4 +1,3 @@
-import math
 import numpy as np 
 
 def q_mult(q1: np.array, q2: np.array):
@@ -22,3 +21,14 @@ def axisangle_to_q(v: np.array, theta: float) -> np.array:
     w = np.cos(theta)
     v *= np.sin(theta)    
     return np.append(w, v)
+
+def from_angles_2_basis(angles: np.array) -> np.array:
+    # todo: avoid indexing and define a matrix mult strategy
+    transformed_basis = np.eye(3)
+    for i in range(3):
+        q = axisangle_to_q(v=transformed_basis[i, :], theta=angles[i]*np.pi/180)
+        transformed_basis[0, :] = qv_mult(q1=q, v1=transformed_basis[0, :])
+        transformed_basis[1, :] = qv_mult(q1=q, v1=transformed_basis[1, :])
+        transformed_basis[2, :] = qv_mult(q1=q, v1=transformed_basis[2, :])        
+    return transformed_basis
+    

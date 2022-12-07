@@ -1,5 +1,4 @@
 import utils
-import math
 from typing import Dict
 from enum import Enum
 import numpy as np
@@ -26,22 +25,14 @@ class XAxisMotor(Actuator):
         if self.constraints['min'] != -np.inf:
             self.constraints['min'] *= np.pi/180
 
-    def apply(self, vector: np.array, delta_commands: np.array, father_joint_sys: np.array, child_joint_sys: np.array):            
-        self.angle += delta_commands[0]   
-        temp_angle = min(self.constraints['max'], self.angle)
-        temp_angle = max(self.constraints['min'], temp_angle)
-        delta_commands[0] += temp_angle - self.angle 
-        self.angle = temp_angle
-    
-        q = utils.axisangle_to_q(v=np.array(father_joint_sys[:, 0]), theta=delta_commands[0])
+    def apply(self, child_config: Dict[str, np.array], parent_config: Dict[str, np.array], command: np.array) -> None:            
+        q = utils.axisangle_to_q(v=parent_config["basis"][0,:], theta=command[0])
 
         # update child joint system
-        child_joint_sys[:, 0] = utils.qv_mult(q, child_joint_sys[:, 0])
-        child_joint_sys[:, 1] = utils.qv_mult(q, child_joint_sys[:, 1])
-        child_joint_sys[:, 2] = utils.qv_mult(q, child_joint_sys[:, 2])
+        for i in range(3):
+            child_config["basis"][i, :] = utils.qv_mult(q, child_config["basis"][i, :])
     
-        return utils.qv_mult(q, vector)
-
+        child_config["coords"][:] = utils.qv_mult(q, child_config["coords"] - parent_config["coords"]) + parent_config["coords"]        
 
 
 class YAxisMotor(Actuator):
@@ -54,23 +45,14 @@ class YAxisMotor(Actuator):
         if self.constraints['min'] != -np.inf:
             self.constraints['min'] *= np.pi/180
 
-    def apply(self, vector: np.array, delta_commands: np.array, father_joint_sys: np.array, child_joint_sys: np.array):   
-        self.angle += delta_commands[1]   
-        temp_angle = min(self.constraints['max'], self.angle)
-        temp_angle = max(self.constraints['min'], temp_angle)
-        delta_commands[1] += temp_angle - self.angle 
-        self.angle = temp_angle
-
-        q = utils.axisangle_to_q(v=np.array(father_joint_sys[:, 1]), theta=delta_commands[1])
+    def apply(self, child_config: Dict[str, np.array], parent_config: Dict[str, np.array], command: np.array) -> None:
+        q = utils.axisangle_to_q(v=parent_config["basis"][1,:], theta=command[1])
 
         # update child joint system
-        child_joint_sys[:, 0] = utils.qv_mult(q, child_joint_sys[:, 0])
-        child_joint_sys[:, 1] = utils.qv_mult(q, child_joint_sys[:, 1])
-        child_joint_sys[:, 2] = utils.qv_mult(q, child_joint_sys[:, 2])
-        
-            
-        self.angle += delta_commands[1]   
-        return utils.qv_mult(q, vector)
+        for i in range(3):
+            child_config["basis"][i, :] = utils.qv_mult(q, child_config["basis"][i, :])
+    
+        child_config["coords"] = utils.qv_mult(q, child_config["coords"] - parent_config["coords"]) + parent_config["coords"]
 
 
 class ZAxisMotor(Actuator):
@@ -83,22 +65,14 @@ class ZAxisMotor(Actuator):
         if self.constraints['min'] != -np.inf:
             self.constraints['min'] *= np.pi/180
 
-    def apply(self, vector: np.array, delta_commands: np.array, father_joint_sys: np.array, child_joint_sys: np.array):                    
-        self.angle += delta_commands[2]   
-        temp_angle = min(self.constraints['max'], self.angle)
-        temp_angle = max(self.constraints['min'], temp_angle)
-        delta_commands[2] += temp_angle - self.angle 
-        self.angle = temp_angle
-        
-        q = utils.axisangle_to_q(v=np.array(father_joint_sys[:, 2]), theta=delta_commands[2])
+    def apply(self, child_config: Dict[str, np.array], parent_config: Dict[str, np.array], command: np.array) -> None:                 
+        q = utils.axisangle_to_q(v=parent_config["basis"][2,:], theta=command[2])
 
         # update child joint system
-        child_joint_sys[:, 0] = utils.qv_mult(q, child_joint_sys[:, 0])
-        child_joint_sys[:, 1] = utils.qv_mult(q, child_joint_sys[:, 1])
-        child_joint_sys[:, 2] = utils.qv_mult(q, child_joint_sys[:, 2])
-            
-        #self.angle += delta_commands[2]   
-        return utils.qv_mult(q, vector)
+        for i in range(3):
+            child_config["basis"][i, :] = utils.qv_mult(q, child_config["basis"][i, :])
+    
+        child_config["coords"][:] = utils.qv_mult(q, child_config["coords"] - parent_config["coords"]) + parent_config["coords"]
 
 
 class ActuatorSelector(Enum):

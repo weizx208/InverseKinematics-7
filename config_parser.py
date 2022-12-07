@@ -18,15 +18,13 @@ class ArmConfigParser:
         joints = []
         for joint in self.config["Joints"]:          
             actuators = []
-            for act_index, act in enumerate(joint["actuators"]):
+            for act in joint["actuators"]:
                 d = ActuatorSelector[act["type"]].value
                 del act['type']            
                 d_inst = d.__new__(d, **act)
                 d_inst.__init__(**act)
                 actuators.append(d_inst)        
-            joints.append(Joint(id = joint["id"], 
-                                actuators=actuators)
-                         )
+            joints.append(Joint(id = joint["id"], actuators=actuators))
         return RobotArm(joints=joints, n_dims=self.config["n_dims"], 
-                        vertices=np.array(self.config["Geometry"]["vertices"]),
+                        vertices=self.config["Geometry"]["vertices"],
                         edges=self.config["Geometry"]["edges"])        
