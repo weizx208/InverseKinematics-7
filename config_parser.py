@@ -1,8 +1,6 @@
 import yaml 
-import numpy as np
 from robot import RobotArm
 from actuator import ActuatorSelector
-from dof import DegreeOfFreedom
 from joints import Joint
 
 class ArmConfigParser:
@@ -25,6 +23,6 @@ class ArmConfigParser:
                 d_inst.__init__(**act)
                 actuators.append(d_inst)        
             joints.append(Joint(id = joint["id"], actuators=actuators))
-        return RobotArm(joints=joints, n_dims=self.config["n_dims"], 
+        return RobotArm(joints=joints,  
                         vertices=self.config["Geometry"]["vertices"],
                         edges=self.config["Geometry"]["edges"])        

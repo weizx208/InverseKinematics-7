@@ -7,7 +7,7 @@ from skeleton import Skeleton
 
 
 class Robot(ABC):    
-    def __init__(self, n_dims: int, joints: List[Joint],
+    def __init__(self, joints: List[Joint],
                  vertices: Dict[str, List[float]], 
                  edges: List[List[int]]):
         """
@@ -21,25 +21,21 @@ class Robot(ABC):
                                   --------------------------------------------------------
                             J_n : |  d_angle_x | d_angle_y | d_angle_z | d_x | d_y | d_z |   
                                   --------------------------------------------------------
-        """ 
-        if n_dims not in [2, 3]:
-            raise ValueError(f"invalid number of dimensions")
-
+        """        
         # create skeleton
         self.skeleton = Skeleton(joints=joints, 
                                  joints_loc=np.array(vertices["coords"]).astype(np.float64), 
-                                 joints_angles=np.array(vertices["angles"]).astype(np.float64),
+                                 joints_angles=np.array(vertices["angles"]).astype(np.float64)*np.pi/180,
                                  edges=edges)        
-        self.n_dims = n_dims
         self.delta_commands = np.zeros(shape=(len(joints), 6))
         self.plot = plt.figure().add_subplot(projection='3d')       
 
 
 class RobotArm(Robot):
-    def __init__(self, n_dims:int, joints: List[Joint],
+    def __init__(self, joints: List[Joint],
                  vertices: Dict[str, List[float]], 
                  edges: List[List[int]]):
-        super(RobotArm, self).__init__(n_dims=n_dims, joints=joints, vertices=vertices, edges=edges)
+        super(RobotArm, self).__init__(joints=joints, vertices=vertices, edges=edges)
     
     @staticmethod
     def vertices_distance(pt1: np.array, pt2: np.array):
@@ -55,7 +51,7 @@ class RobotArm(Robot):
         max_count = 100
         while count < max_count:
             for j in self.skeleton.joints:     
-                for i in range(self.n_dims):
+                for i in range(3):
                     shadow = self.skeleton.get_shadow()                                       
                     error = self.vertices_distance(pt1=shadow.joints_loc[joint_id, :], pt2=target)
 

@@ -24,7 +24,8 @@ class Skeleton:
     def __call__(self, id: int):
         return {
             "coords": self.joints_loc[id],
-            "basis": self.joints_basis[id]            
+            "basis": self.joints_basis[id],           
+            "id" : id 
         }
 
     def export_config(self) -> List[Dict[str, Any]]:

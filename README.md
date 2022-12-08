@@ -15,11 +15,10 @@ python 3.*
 ```
 
 ## Configuration
-The configs files (/resources/configs/*.yml) allows to dynamically create the robot structure (in the template below it is provided the example of a robot arm with 2 joints). In this tool a robot is considered as a set of arms connected by joints.
+The configs files (/resources/configs/*.yml) allow to dynamically create the robot structure (in the template below it is provided the example of a robot arm with 2 joints). In this tool a robot is considered as a set of arms connected by joints.
 
 #### Config structure
 ``` yaml
-n_dims: 3
 Joints:  
     - id: 0
       actuators:     
@@ -53,7 +52,6 @@ Geometry:
     + **id**: numeric value (starting from index 0) that allows to map that joint into the robot geometry.
     + **actuators**: list of actuators (now available x, y, and z rotation).
       - **contraints**: define the maximum and the minimum values (relative to the starting configuration) appliable by the actuator.
-        - TODO: start_angle is not yet implemented.
       
 + **Geometry**: contains informations about the robot geometry.
     + **vertices**: list of vectors describing the initial position of each joint (the joint id allows to map each joint to its location).
@@ -61,7 +59,7 @@ Geometry:
 
 ## Execution
 + use yaml templates (contained in /resources/configs/) or create your custom configuration file.
-+ change variable **CONFIG_PATH** into ***main.py*** in order to point to your config file.
++ set variable **CONFIG_PATH** into ***main.py***.
 ```python                    
 
 CONFIG_PATH = os.path.join('.', 'resources', 'configs', 'armConfig - 2 joints.yml')
