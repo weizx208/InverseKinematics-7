@@ -4,7 +4,7 @@ from typing import List
 import matplotlib.pyplot as plt
 from config_parser import ArmConfigParser
 
-CONFIG_PATH = os.path.join('.', 'resources', 'configs', 'armConfig - 3 joints.yml')
+CONFIG_PATH = os.path.join('.', 'resources', 'configs', 'armConfig - 3 joints_constr.yml')
 
 if __name__ == "__main__":    
     arm = ArmConfigParser(path=CONFIG_PATH).parse()    
@@ -16,4 +16,4 @@ if __name__ == "__main__":
             ]
 
     for target in targets:
-        arm.inverse_kinematics(target=target, joint_id=4, lr=.01, atol=0.01)
+        arm.inverse_kinematics(target=target, joints_id=[7, 8, 11], lr=.001, atol=0.01)

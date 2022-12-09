@@ -38,14 +38,14 @@ class RobotArm(Robot):
         super(RobotArm, self).__init__(joints=joints, vertices=vertices, edges=edges)
     
     @staticmethod
-    def vertices_distance(pt1: np.array, pt2: np.array):
-        return np.linalg.norm(pt1 - pt2)
+    def vertices_distance(pt_list: np.array, target: np.array):
+        return np.sum(np.sum((pt_list - target)**2, axis=1))
     
     def apply_kinematics(self, skeleton: Skeleton, joint_id: int ) -> np.array:                            
         skeleton.process_command(joint_id=joint_id, command=self.delta_commands[joint_id, :])
         self.delta_commands[joint_id, :] = np.zeros(shape=(1, 6))  
 
-    def inverse_kinematics(self, target: np.array, joint_id: int, atol: float = 0.1, lr: float = 10):            
+    def inverse_kinematics(self, target: np.array, joints_id: List[int], atol: float = 0.1, lr: float = 10):            
         angle_dist = np.pi/180  # equivalent to 1 deg 
         count = 0
         max_count = 100
@@ -53,11 +53,11 @@ class RobotArm(Robot):
             for j in self.skeleton.joints:     
                 for i in range(3):
                     shadow = self.skeleton.get_shadow()                                       
-                    error = self.vertices_distance(pt1=shadow.joints_loc[joint_id, :], pt2=target)
+                    error = self.vertices_distance(pt_list=shadow.joints_loc[joints_id, :], target=target)
 
                     self.delta_commands[j.id, i] = angle_dist
                     self.apply_kinematics(skeleton=shadow, joint_id=j.id)                            
-                    new_error = self.vertices_distance(pt1=shadow.joints_loc[joint_id, :], pt2=target)
+                    new_error = self.vertices_distance(pt_list=shadow.joints_loc[joints_id, :], target=target)
 
                     self.delta_commands[j.id, i] = -lr*(new_error-error)/angle_dist
                     self.apply_kinematics(skeleton=self.skeleton, joint_id=j.id) 

@@ -1,0 +1,147 @@
+# organize config as obj file:
+#     - firstly define the vertices (Joints) section
+#     - then define the edges between them (referring to their id)
+---
+Joints:  
+    - id: 0
+      actuators:     
+          - type: ROTARY_ACTUATOR
+            axis: 2
+            start_angle: 0
+            constraints:         
+              min: -.inf 
+              max: .inf
+    - id: 1
+      actuators:   
+          - type: ROTARY_ACTUATOR
+            axis: 0
+            start_angle: 0
+            constraints:         
+              min: -30 
+              max: 90
+    - id: 2
+      actuators:   []       
+    - id: 3
+      actuators: 
+          - type: ROTARY_ACTUATOR
+            axis: 0
+            start_angle: 0
+            constraints:         
+              min: -.inf 
+              max: .inf  
+          - type: ROTARY_ACTUATOR
+            axis: 1
+            start_angle: 0
+            constraints:         
+              min: -60 
+              max: 85  
+          - type: ROTARY_ACTUATOR
+            axis: 2
+            start_angle: 0
+            constraints:         
+              min: -.inf 
+              max: .inf 
+    - id: 4
+      actuators: 
+          - type: ROTARY_ACTUATOR
+            axis: 0
+            start_angle: 0
+            constraints:         
+              min: -.inf 
+              max: .inf  
+          - type: ROTARY_ACTUATOR
+            axis: 1
+            start_angle: 0
+            constraints:         
+              min: -60 
+              max: 85  
+          - type: ROTARY_ACTUATOR
+            axis: 2
+            start_angle: 0
+            constraints:         
+              min: -.inf 
+              max: .inf
+    - id: 5
+      actuators: 
+          - type: ROTARY_ACTUATOR
+            axis: 1
+            start_angle: 0
+            constraints:         
+              min: -60 
+              max: 85
+    - id: 6
+      actuators: 
+          - type: ROTARY_ACTUATOR
+            axis: 1
+            start_angle: 0
+            constraints:         
+              min: -60 
+              max: 85          
+    - id: 7
+      actuators: []
+    - id: 8
+      actuators: []    
+    - id: 9
+      actuators: 
+          - type: ROTARY_ACTUATOR
+            axis: 0
+            start_angle: 0
+            constraints:         
+              min: -60 
+              max: 85          
+          - type: ROTARY_ACTUATOR
+            axis: 1
+            start_angle: 0
+            constraints:         
+              min: -60 
+              max: 85    
+          - type: ROTARY_ACTUATOR
+            axis: 2
+            start_angle: 0
+            constraints:         
+              min: -.inf 
+              max: .inf    
+    - id: 10
+      actuators: 
+          - type: ROTARY_ACTUATOR
+            axis: 2
+            start_angle: 0
+            constraints:         
+              min: -60 
+              max: 85
+    - id: 11
+      actuators: []
+Geometry:
+  vertices:
+      coords: [
+        [0, 0, 0],
+        [0, 0, 1],
+        [0, 0, 2],
+        [0, 2, 10],
+        [0, -2, 10],        
+        [0, 2, 15],
+        [0, -2, 15],
+        [0, 2, 20],
+        [0, -2, 20],  
+        [0, -3, 4], 
+        [-3, -2.5, 6], 
+        [-6, -2, 8], 
+      ]
+      angles: [
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+      ]
+  edges: [
+    [1], [2], [3, 4, 9], [4, 5], [3, 6], [7], [8], [], [], [10], [11], []
+  ]
+  leaf_joint: [4]
