@@ -111,6 +111,67 @@ Joints:
               max: 85
     - id: 11
       actuators: []
+    - id: 12
+      actuators: 
+          - type: ROTARY_ACTUATOR
+            axis: 0
+            start_angle: 0
+            constraints:         
+              min: -.inf 
+              max: .inf  
+          - type: ROTARY_ACTUATOR
+            axis: 1
+            start_angle: 0
+            constraints:         
+              min: -60 
+              max: 85  
+          - type: ROTARY_ACTUATOR
+            axis: 2
+            start_angle: 0
+            constraints:         
+              min: -.inf 
+              max: .inf 
+    - id: 13
+      actuators: 
+          - type: ROTARY_ACTUATOR
+            axis: 0
+            start_angle: 0
+            constraints:         
+              min: -.inf 
+              max: .inf  
+          - type: ROTARY_ACTUATOR
+            axis: 1
+            start_angle: 0
+            constraints:         
+              min: -60 
+              max: 85  
+          - type: ROTARY_ACTUATOR
+            axis: 2
+            start_angle: 0
+            constraints:         
+              min: -.inf 
+              max: .inf
+    - id: 14
+      actuators: 
+          - type: ROTARY_ACTUATOR
+            axis: 1
+            start_angle: 0
+            constraints:         
+              min: -60 
+              max: 85
+    - id: 15
+      actuators: 
+          - type: ROTARY_ACTUATOR
+            axis: 1
+            start_angle: 0
+            constraints:         
+              min: -60 
+              max: 85          
+    - id: 16
+      actuators: []
+    - id: 17
+      actuators: []    
+    
 Geometry:
   vertices:
       coords: [
@@ -120,12 +181,19 @@ Geometry:
         [0, 2, 10],
         [0, -2, 10],        
         [0, 2, 15],
-        [0, -2, 15],
+        [0, -2, 13],
         [0, 2, 20],
-        [0, -2, 20],  
+        [0, -2, 18],  
         [0, -3, 4], 
         [-3, -2.5, 6], 
-        [-6, -2, 8], 
+        [-6, -2, 8],
+
+        [0, 6, 10],
+        [0, 10, 10],
+        [0, 6, 13],
+        [0, 10, 12],
+        [0, 6, 18],  
+        [0, 10, 14],         
       ]
       angles: [
         [0, 0, 0],
@@ -140,8 +208,14 @@ Geometry:
         [0, 0, 0],
         [0, 0, 0],
         [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0],
+        [0, 0, 0]
       ]
   edges: [
-    [1], [2], [3, 4, 9], [4, 5], [3, 6], [7], [8], [], [], [10], [11], []
+    [1], [2], [3, 4, 9, 12, 13], [5], [6], [7], [8], [], [], [10], [11], [], [14], [15], [16], [17], [], []
   ]
   leaf_joint: [4]

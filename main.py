@@ -4,7 +4,13 @@ from typing import List
 import matplotlib.pyplot as plt
 from config_parser import ArmConfigParser
 
-CONFIG_PATH = os.path.join('.', 'resources', 'configs', 'armConfig - 3 joints_constr.yml')
+# arm robot example
+#CONFIG_PATH = os.path.join('.', 'resources', 'configs', 'armConfig - 3 joints.yml')
+#JOINTS_IDS = [4]
+
+# hand example
+CONFIG_PATH = os.path.join('.', 'resources', 'configs', 'hand.yml')
+JOINTS_IDS = [7, 8, 11, 16, 17]
 
 if __name__ == "__main__":    
     arm = ArmConfigParser(path=CONFIG_PATH).parse()    
@@ -16,4 +22,4 @@ if __name__ == "__main__":
             ]
 
     for target in targets:
-        arm.inverse_kinematics(target=target, joints_id=[7, 8, 11], lr=.001, atol=0.01)
+        arm.inverse_kinematics(target=target, joints_id=JOINTS_IDS, lr=.0001, atol=0.01)
