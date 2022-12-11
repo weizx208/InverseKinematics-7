@@ -1,9 +1,9 @@
 import yaml 
-from robot import RobotArm
+from robot import Robot
 from actuator import ActuatorSelector
 from joints import Joint
 
-class ArmConfigParser:
+class RobotConfigParser:
     def __init__(self, path: str):
         with open(path, "r") as stream:
             try:
@@ -12,7 +12,7 @@ class ArmConfigParser:
                 print(exc)       
                 exit(-1)
 
-    def parse(self) -> RobotArm:            
+    def parse(self) -> Robot:            
         joints = []
         for joint in self.config["Joints"]:          
             actuators = []
@@ -23,6 +23,6 @@ class ArmConfigParser:
                 d_inst.__init__(**act)
                 actuators.append(d_inst)        
             joints.append(Joint(id = joint["id"], actuators=actuators))
-        return RobotArm(joints=joints,  
-                        vertices=self.config["Geometry"]["vertices"],
-                        edges=self.config["Geometry"]["edges"])        
+        return Robot(joints=joints,  
+                    vertices=self.config["Geometry"]["vertices"],
+                    edges=self.config["Geometry"]["edges"])        

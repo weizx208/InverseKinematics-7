@@ -18,41 +18,47 @@ class Skeleton:
         self.edges_t: List[List[int]] = []
         self.transpose_edges()
         self.visited: List[bool] = [False]*len(self.joints)     
-        self.joints_basis: List[np.array] = [np.eye(3) for i in range(len(self.joints))]
-        self.point_to_childs()
-        self.joints_basis: List[np.array] = [utils.rotate_basis_by_angles(angles=angles, start_basis=self.joints_basis[a_i])
-                                             for a_i, angles in enumerate(joints_angles)]   
+        self.joints_basis: List[np.array] = [np.eye(3) for _ in range(len(self.joints))]
+        self.set_joints_basis_alignemt(joints_angles=joints_angles)    
 
     def transpose_edges(self):        
         self.edges_t = [[] for i in range(len(self.edges))] 
         for e_index, e in enumerate(self.edges):
             for index in e:                
                 self.edges_t[index] += [e_index]
+                
+    def get_basis_target_z(self, joint_id: int) -> np.array:
+        point_to: List[np.array] = []
+        for c in self.edges[joint_id]:
+            point_to.append(self.joints_loc[c])
+        
+        if len(point_to) == 0:
+            point_to = [self.joints_loc[self.edges_t[joint_id][0]]]
+            return - np.mean(np.array(point_to), axis=0) + self.joints_loc[joint_id]
+        return np.mean(np.array(point_to), axis=0) - self.joints_loc[joint_id]
 
-    def point_to_childs(self):
-        for j in self.joints:
-            point_to: List[np.array] = []
-            for c in self.edges[j.id]:
-                point_to.append(self.joints_loc[c])
-            
-            if len(point_to) == 0:
-                point_to = [self.joints_loc[self.edges_t[j.id][0]]]
-                z = - np.mean(np.array(point_to), axis=0) + self.joints_loc[j.id]
-            else:
-                z = np.mean(np.array(point_to), axis=0) - self.joints_loc[j.id]
-            
-            z = z/np.linalg.norm(z)
-            current_z = self.joints_basis[j.id][2, :]            
-            rot_axis = np.cross(current_z, z)
+    def align_to_target_z(self, joint_id: int, target_z: np.array):
+            current_z = self.joints_basis[joint_id][2, :]
+            rot_axis = np.cross(current_z, target_z)
             norm = np.linalg.norm(rot_axis)
-            if norm > 0:
-                rot_axis /= norm            
-            theta = np.arctan(norm/current_z.dot(z)) 
+            if norm <= 0: 
+                return
+            
+            rot_axis /= norm            
+            theta = np.arccos(current_z.dot(target_z)) 
             if theta != 0 and theta != np.nan:
                 q = utils.axisangle_to_q(v=rot_axis, theta=theta)                
-                self.joints_basis[j.id][0, :] = utils.qv_mult(v1=self.joints_basis[j.id][0, :], q1=q)
-                self.joints_basis[j.id][1, :] = utils.qv_mult(v1=self.joints_basis[j.id][1, :], q1=q)
-                self.joints_basis[j.id][2, :] = z
+                self.joints_basis[joint_id][0, :] = utils.qv_mult(v1=self.joints_basis[joint_id][0, :], q1=q)
+                self.joints_basis[joint_id][1, :] = utils.qv_mult(v1=self.joints_basis[joint_id][1, :], q1=q)
+                self.joints_basis[joint_id][2, :] = target_z
+            
+    def set_joints_basis_alignemt(self, joints_angles: List[np.array]):
+        for j in self.joints:            
+            z = self.get_basis_target_z(joint_id=j.id)
+            z = z/np.linalg.norm(z)            
+            
+            self.align_to_target_z(joint_id=j.id, target_z=z)
+            utils.rotate_basis_by_angles(angles=joints_angles[j.id], start_basis=self.joints_basis[j.id])
             
     def refresh_visited_state(self):
         self.visited = [False]*len(self.joints)

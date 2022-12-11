@@ -29,13 +29,6 @@ class Robot(ABC):
                                  edges=edges)        
         self.delta_commands = np.zeros(shape=(len(joints), 6))
         self.plot = plt.figure().add_subplot(projection='3d')       
-
-
-class RobotArm(Robot):
-    def __init__(self, joints: List[Joint],
-                 vertices: Dict[str, List[float]], 
-                 edges: List[List[int]]):
-        super(RobotArm, self).__init__(joints=joints, vertices=vertices, edges=edges)
     
     @staticmethod
     def vertices_distance(pt_list: np.array, target: np.array):
@@ -48,7 +41,7 @@ class RobotArm(Robot):
     def inverse_kinematics(self, target: np.array, joints_id: List[int], atol: float = 0.1, lr: float = 10):            
         angle_dist = np.pi/180  # equivalent to 1 deg 
         count = 0
-        max_count = 100
+        max_count = 50
         while count < max_count:
             for j in self.skeleton.joints:     
                 for i in range(3):
@@ -73,7 +66,7 @@ class RobotArm(Robot):
         self.plot.set_ylabel('Y')
         self.plot.set_zlabel('Z')       
         self.plot.plot(target[0], target[1], target[2], marker='*')
-        self.plot_config(vertex_id=0, color='r')                
+        self.plot_config(vertex_id=0, color='r')          
         plt.pause(0.0001)
              
     def plot_config(self, vertex_id: np.array, color: str = 'b') -> None:           

@@ -1,19 +1,25 @@
 import os
 import numpy as np 
-from typing import List
-import matplotlib.pyplot as plt
-from config_parser import ArmConfigParser
+from config_parser import RobotConfigParser
 
-# arm robot example
+# 2 joints unconstrained
+#CONFIG_PATH = os.path.join('.', 'resources', 'configs', 'armConfig - 2 joints.yml')
+#JOINTS_IDS = [2]
+
+# 3 joints unconstrained
 #CONFIG_PATH = os.path.join('.', 'resources', 'configs', 'armConfig - 3 joints.yml')
 #JOINTS_IDS = [4]
 
-# hand example
+# 3 joints constrained
+#CONFIG_PATH = os.path.join('.', 'resources', 'configs', 'armConfig - 3 joints_constr.yml')
+#JOINTS_IDS = [4]
+
+# hand 
 CONFIG_PATH = os.path.join('.', 'resources', 'configs', 'hand.yml')
 JOINTS_IDS = [7, 8, 11, 16, 17]
 
 if __name__ == "__main__":    
-    arm = ArmConfigParser(path=CONFIG_PATH).parse()    
+    robot = RobotConfigParser(path=CONFIG_PATH).parse()    
     
     targets = [
                 np.array([-30, 1, 5]),              
@@ -22,4 +28,4 @@ if __name__ == "__main__":
             ]
 
     for target in targets:
-        arm.inverse_kinematics(target=target, joints_id=JOINTS_IDS, lr=.0001, atol=0.01)
+        robot.inverse_kinematics(target=target, joints_id=JOINTS_IDS, lr=.0001)
