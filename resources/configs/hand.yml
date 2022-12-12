@@ -17,7 +17,7 @@ Joints:
             axis: 0
             start_angle: 0
             constraints:         
-              min: -30 
+              min: -90 
               max: 90
     - id: 2
       actuators:   []       
@@ -27,56 +27,44 @@ Joints:
             axis: 0
             start_angle: 0
             constraints:         
-              min: -.inf 
-              max: .inf  
+              min: -5 
+              max: 5  
           - type: ROTARY_ACTUATOR
             axis: 1
             start_angle: 0
             constraints:         
-              min: -60 
-              max: 85  
-          - type: ROTARY_ACTUATOR
-            axis: 2
-            start_angle: 0
-            constraints:         
-              min: -.inf 
-              max: .inf 
+              min: 0 
+              max: 90        
     - id: 4
       actuators: 
           - type: ROTARY_ACTUATOR
             axis: 0
             start_angle: 0
             constraints:         
-              min: -.inf 
-              max: .inf  
+              min: -5 
+              max: 5 
           - type: ROTARY_ACTUATOR
             axis: 1
             start_angle: 0
             constraints:         
-              min: -60 
-              max: 85  
-          - type: ROTARY_ACTUATOR
-            axis: 2
-            start_angle: 0
-            constraints:         
-              min: -.inf 
-              max: .inf
+              min: 0 
+              max: 90  
     - id: 5
       actuators: 
           - type: ROTARY_ACTUATOR
             axis: 1
             start_angle: 0
             constraints:         
-              min: -60 
-              max: 85
+              min: 0 
+              max: 90
     - id: 6
       actuators: 
           - type: ROTARY_ACTUATOR
             axis: 1
             start_angle: 0
             constraints:         
-              min: -60 
-              max: 85          
+              min: 0 
+              max: 90          
     - id: 7
       actuators: []
     - id: 8
@@ -87,28 +75,22 @@ Joints:
             axis: 0
             start_angle: 0
             constraints:         
-              min: -60 
-              max: 85          
+              min: -5 
+              max: 5          
           - type: ROTARY_ACTUATOR
             axis: 1
             start_angle: 0
             constraints:         
-              min: -60 
-              max: 85    
-          - type: ROTARY_ACTUATOR
-            axis: 2
-            start_angle: 0
-            constraints:         
-              min: -.inf 
-              max: .inf    
+              min: 0 
+              max: 90              
     - id: 10
       actuators: 
           - type: ROTARY_ACTUATOR
-            axis: 2
+            axis: 0
             start_angle: 0
             constraints:         
-              min: -60 
-              max: 85
+              min: 0 
+              max: 90
     - id: 11
       actuators: []
     - id: 12
@@ -117,56 +99,44 @@ Joints:
             axis: 0
             start_angle: 0
             constraints:         
-              min: -.inf 
-              max: .inf  
+              min: -5 
+              max: 5  
           - type: ROTARY_ACTUATOR
             axis: 1
             start_angle: 0
             constraints:         
-              min: -60 
-              max: 85  
-          - type: ROTARY_ACTUATOR
-            axis: 2
-            start_angle: 0
-            constraints:         
-              min: -.inf 
-              max: .inf 
+              min: 0 
+              max: 90          
     - id: 13
       actuators: 
           - type: ROTARY_ACTUATOR
             axis: 0
             start_angle: 0
             constraints:         
-              min: -.inf 
-              max: .inf  
+              min: -5 
+              max: 5 
           - type: ROTARY_ACTUATOR
             axis: 1
             start_angle: 0
             constraints:         
-              min: -60 
-              max: 85  
-          - type: ROTARY_ACTUATOR
-            axis: 2
-            start_angle: 0
-            constraints:         
-              min: -.inf 
-              max: .inf
+              min: -0 
+              max: 90    
     - id: 14
       actuators: 
           - type: ROTARY_ACTUATOR
             axis: 1
             start_angle: 0
             constraints:         
-              min: -60 
-              max: 85
+              min: -0 
+              max: 90
     - id: 15
       actuators: 
           - type: ROTARY_ACTUATOR
             axis: 1
             start_angle: 0
             constraints:         
-              min: -60 
-              max: 85          
+              min: -0 
+              max: 90         
     - id: 16
       actuators: []
     - id: 17
