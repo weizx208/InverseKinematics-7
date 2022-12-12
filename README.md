@@ -85,7 +85,7 @@ if __name__ == "__main__":
 + execute the inverse_kinematics method:\
   where:
     - **target**: location of the target (numpy array)
-    - **joints_id**: list of the ids corresponding to the joints 
+    - **joints_id**: list of the ids corresponding to the joints that have to reach the target (in other words this is the subset of joints whose location is used in the cost function). 
     - **lr**: learning rate 
 ```python
 robot.inverse_kinematics(target=np.array([x, y, z]), joints_id=id, lr=.0001)
