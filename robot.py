@@ -1,3 +1,4 @@
+import math
 import numpy as np
 from abc import ABC
 from typing import List, Dict
@@ -28,7 +29,13 @@ class Robot(ABC):
                                  joints_angles=np.array(vertices["angles"]).astype(np.float64)*np.pi/180,
                                  edges=edges)        
         self.delta_commands = np.zeros(shape=(len(joints), 6))
-        self.plot = plt.figure().add_subplot(projection='3d')       
+        self.plot = plt.figure().add_subplot(projection='3d')    
+        
+        self.beta_1 = 0.9
+        self.beta_2 = 0.999
+        self.epsilon = 1e-8
+        self.momentum: List[float] = []
+        self.s: List[float] = []
     
     @staticmethod
     def vertices_distance(pt_list: np.array, target: np.array):
@@ -38,12 +45,16 @@ class Robot(ABC):
         skeleton.process_command(joint_id=joint_id, command=self.delta_commands[joint_id, :])
         self.delta_commands[joint_id, :] = np.zeros(shape=(1, 6))  
 
-    def inverse_kinematics(self, target: np.array, joints_id: List[int], atol: float = 0.1, lr: float = 10):            
+    def inverse_kinematics(self, target: np.array, joints_id: List[int], lr: float = 10, atol: float = 0.05):            
         angle_dist = np.pi/180  # equivalent to 1 deg 
         count = 0
-        max_count = 50
+        max_count = 150
+        self.momentum: List[float] = [[0, 0, 0] for _ in self.skeleton.joints]
+        self.s: List[float] = [[0, 0, 0] for _ in self.skeleton.joints]
+
         while count < max_count:
-            for j in self.skeleton.joints:     
+            stop_flag: bool = True
+            for j in self.skeleton.joints:                     
                 for i in range(3):
                     shadow = self.skeleton.get_shadow()                                       
                     error = self.vertices_distance(pt_list=shadow.joints_loc[joints_id, :], target=target)
@@ -52,9 +63,24 @@ class Robot(ABC):
                     self.apply_kinematics(skeleton=shadow, joint_id=j.id)                            
                     new_error = self.vertices_distance(pt_list=shadow.joints_loc[joints_id, :], target=target)
 
-                    self.delta_commands[j.id, i] = -lr*(new_error-error)/angle_dist
+                    # early stopping criteria
+                    if abs(new_error - error) > atol:
+                        stop_flag = False                            
+
+                    # TODO : optimizer injected class 
+                    # Adam Optimizer
+                    self.momentum[j.id][i] = self.beta_1*self.momentum[j.id][i] - (1-self.beta_1)*(new_error-error)/angle_dist
+                    self.s[j.id][i] = (self.beta_2*self.s[j.id][i] + (1-self.beta_2)*((new_error-error)/angle_dist)**2) 
+                    s = self.s[j.id][i] / (1-self.beta_2**(count+1))
+                    m =  self.momentum[j.id][i] / (1-self.beta_1**(count+1))
+                    self.delta_commands[j.id, i] = lr*m/(math.sqrt(s)+self.epsilon)
+                   
+                    # GD Optimizer
+                    #self.delta_commands[j.id, i] = -lr*(new_error-error)/angle_dist
                     self.apply_kinematics(skeleton=self.skeleton, joint_id=j.id) 
-            count += 1    
+            if stop_flag:                
+                break            
+            count += 1                    
             self.refresh_plot(target=target)
             
     def refresh_plot(self, target: np.array) -> None:
