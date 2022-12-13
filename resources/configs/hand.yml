@@ -75,14 +75,14 @@ Joints:
             axis: 0
             start_angle: 0
             constraints:         
-              min: -5 
-              max: 5          
+              min: 0 
+              max: 90              
           - type: ROTARY_ACTUATOR
             axis: 1
             start_angle: 0
             constraints:         
-              min: 0 
-              max: 90              
+              min: -30 
+              max: 30                    
     - id: 10
       actuators: 
           - type: ROTARY_ACTUATOR

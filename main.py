@@ -18,6 +18,7 @@ JOINTS_IDS = [4]
 #CONFIG_PATH = os.path.join('.', 'resources', 'configs', 'hand.yml')
 #JOINTS_IDS = [7, 8, 11, 16, 17]
 
+
 if __name__ == "__main__":    
     robot = RobotConfigParser(path=CONFIG_PATH).parse()    
     

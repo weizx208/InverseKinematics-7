@@ -37,3 +37,6 @@ def rotate_basis_by_angles(angles: np.array, start_basis: np.array) -> np.array:
         transformed_basis[2, :] = qv_mult(q1=q, v1=transformed_basis[2, :])        
     return transformed_basis
     
+def from_2_vec_to_quat(v1: np.array, v2: np.array) -> np.array:    
+    q = np.concatenate((np.array([np.linalg.norm(v2)*np.linalg.norm(v1) + v2.dot(v1)]), np.cross(v2, v1)))
+    return q/np.linalg.norm(q)

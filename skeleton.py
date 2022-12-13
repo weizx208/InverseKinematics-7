@@ -38,19 +38,11 @@ class Skeleton:
         return np.mean(np.array(point_to), axis=0) - self.joints_loc[joint_id]
 
     def align_to_target_z(self, joint_id: int, target_z: np.array):
-            current_z = self.joints_basis[joint_id][2, :]
-            rot_axis = np.cross(current_z, target_z)
-            norm = np.linalg.norm(rot_axis)
-            if norm <= 0: 
-                return
-            
-            rot_axis /= norm            
-            theta = np.arccos(current_z.dot(target_z)) 
-            if theta != 0 and theta != np.nan:
-                q = utils.axisangle_to_q(v=rot_axis, theta=theta)                
-                self.joints_basis[joint_id][0, :] = utils.qv_mult(v1=self.joints_basis[joint_id][0, :], q1=q)
-                self.joints_basis[joint_id][1, :] = utils.qv_mult(v1=self.joints_basis[joint_id][1, :], q1=q)
-                self.joints_basis[joint_id][2, :] = target_z
+            current_z = self.joints_basis[joint_id][2, :]            
+            q = utils.from_2_vec_to_quat(v1=current_z, v2=target_z)                
+            self.joints_basis[joint_id][0, :] = utils.qv_mult(v1=self.joints_basis[joint_id][0, :], q1=q)
+            self.joints_basis[joint_id][1, :] = utils.qv_mult(v1=self.joints_basis[joint_id][1, :], q1=q)            
+            self.joints_basis[joint_id][2, :] = target_z
             
     def set_joints_basis_alignemt(self, joints_angles: List[np.array]):
         for j in self.joints:            
