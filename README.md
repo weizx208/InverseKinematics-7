@@ -58,7 +58,7 @@ Geometry:
 + **Joints**: contains the list of joints.
     + **id**: numeric value (starting from index 0) that allows to map that joint into the robot geometry.
     + **actuators**: list of actuators associate to a joint.
-      - **type**: type of actuator considered (only ROTARY_ACTUATOR is yet implemented)
+        - **type**: type of actuator considered (only ROTARY_ACTUATOR available)
         - **axis**: id of the joint basis axis considered as axis of rotation ([0, 1, 2] respectivelly x, y and z). 
         - **start_angle**: displacement (in terms of angle) from the zero position.
         - **contraints**: maximum and the minimum angles appliable by the actuator.
