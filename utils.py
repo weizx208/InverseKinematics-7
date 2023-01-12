@@ -27,16 +27,17 @@ def axisangle_to_q(v: np.array, theta: float) -> np.array:
     return np.append(w, v)
 
 
-def rotate_basis_by_angles(angles: np.array, start_basis: np.array) -> np.array:
-    # todo: avoid indexing and define a matrix mult strategy
-    transformed_basis = start_basis
+def rotate_basis_by_angles(angles: np.array, basis: np.array) -> None:    
+    # todo: avoid indexing and define a matrix mult strategy 
     for i in range(3):
-        q = axisangle_to_q(v=transformed_basis[i, :], theta=angles[i])
-        transformed_basis[0, :] = qv_mult(q1=q, v1=transformed_basis[0, :])
-        transformed_basis[1, :] = qv_mult(q1=q, v1=transformed_basis[1, :])
-        transformed_basis[2, :] = qv_mult(q1=q, v1=transformed_basis[2, :])        
-    return transformed_basis
+        q = axisangle_to_q(v=basis[i, :], theta=angles[i])
+        basis[0, :] = qv_mult(q1=q, v1=basis[0, :])
+        basis[1, :] = qv_mult(q1=q, v1=basis[1, :])
+        basis[2, :] = qv_mult(q1=q, v1=basis[2, :])        
     
-def from_2_vec_to_quat(v1: np.array, v2: np.array) -> np.array:    
+def from_2_vec_to_quat(v1: np.array, v2: np.array) -> np.array:   
+    """
+        Get Quaterion rotating vector v1 into vector v2
+    """ 
     q = np.concatenate((np.array([np.linalg.norm(v2)*np.linalg.norm(v1) + v2.dot(v1)]), np.cross(v2, v1)))
     return q/np.linalg.norm(q)

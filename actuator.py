@@ -10,7 +10,7 @@ class Actuator(ABC):
         self.constraints = constraints
 
     @abstractmethod
-    def apply(self, vector: np.array, delta_commands: np.array,
+    def actuate(self, vector: np.array, delta_commands: np.array,
               father_joint_sys: np.array, child_joint_sys: np.array):    
         pass
 
@@ -25,7 +25,7 @@ class RotaryActuator(Actuator):
         if self.constraints['min'] != -np.inf:
             self.constraints['min'] *= np.pi/180
 
-    def apply(self, child_config: Dict[str, np.array], parent_config: Dict[str, np.array], command: np.array) -> None:                 
+    def actuate(self, child_config: Dict[str, np.array], parent_config: Dict[str, np.array], command: np.array) -> None:                        
         self.angle += command[self.axis]   
         temp_angle = min(self.constraints['max'], self.angle)
         temp_angle = max(self.constraints['min'], temp_angle)         
